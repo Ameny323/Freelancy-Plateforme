@@ -261,7 +261,6 @@ kubectl get pods -n freelancy
 kubectl port-forward svc/frontend-service 4200:80 -n freelancy
 ```
 
-For Jenkins, Prometheus, and Grafana access, refer to the `devops/` directory for service configurations and NodePort assignments.
 
 Each service module contains its own:
 - `Dockerfile`
