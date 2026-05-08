@@ -1,0 +1,95 @@
+pipeline {
+    agent any
+    tools {
+        maven "Maven3"
+    }
+    environment {
+        DOCKER_IMAGE        = "pidevfreelancy/api-gateway:latest"
+        SERVICE_DIR         = "backend"
+        SONAR_PROJECT_KEY   = "freelancy-api-gateway"
+        SONAR_PROJECT_NAME  = "api-gateway"
+    }
+    stages {
+        stage('1 - Checkout') {
+            steps {
+                git branch: 'api-gateway',
+                    credentialsId: 'github-credentials',
+                    url: 'https://github.com/arij34/Esprit-PIDEV-4SAE3-2026-Freelancy.git'
+                echo 'Code retrieved from GitHub - branch api-gateway'
+            }
+        }
+
+        stage('2 - Build Maven') {
+            steps {
+                dir("${SERVICE_DIR}") {
+                    sh 'mvn clean package -DskipTests'
+                    echo 'Maven build completed: backend'
+                }
+            }
+        }
+
+        stage('3 - Tests + JaCoCo') {
+            steps {
+                dir("${SERVICE_DIR}") {
+                    sh 'mvn test jacoco:report'
+                    sh 'test -f target/site/jacoco/jacoco.xml'
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+       stage('4 - SonarQube Analysis') {
+            steps {
+                dir("${SERVICE_DIR}") {
+                    withSonarQubeEnv('sonar') {
+                        sh """
+                            mvn sonar:sonar \
+                            -Dsonar.projectKey=api-gateway \
+                            -Dsonar.projectName=api-gateway \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('5 - Docker Build') {
+            steps {
+                dir("${SERVICE_DIR}") {
+                    sh "docker build -t ${DOCKER_IMAGE} ."
+                }
+            }
+        }
+
+        stage('6 - Docker Push') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin
+                        docker push ${DOCKER_IMAGE}
+                    '''
+                }
+            }
+        }
+    }
+    post {
+        always {
+            sh "docker rmi ${DOCKER_IMAGE} || true"
+            echo 'CI Pipeline finished.'
+        }
+        success {
+            echo 'CI Pipeline completed!'
+        }
+        failure {
+            echo 'CI Pipeline failed - check logs above'
+        }
+    }
+}

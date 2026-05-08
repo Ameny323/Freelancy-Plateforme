@@ -1,0 +1,133 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    config:
+      enabled: false
+    gateway:
+      routes:
+        - id: skill-management
+          uri: lb://skill-management-service
+          predicates:
+            - Path=/api/skills/**
+          filters:
+            - StripPrefix=1
+
+        - id: ai-service
+          uri: lb://ai-matching-service
+          predicates:
+            - Path=/api/ai/**
+          filters:
+            - StripPrefix=1
+
+        - id: project-service
+          uri: lb://project-service
+          predicates:
+            - Path=/api/projects/**
+          filters:
+            - StripPrefix=1
+
+        - id: contract-service
+          uri: lb://contract-service
+          predicates:
+            - Path=/api/contracts/**
+          filters:
+            - StripPrefix=1
+
+        - id: challenge-service
+          uri: lb://challenge-service
+          predicates:
+            - Path=/api/challenges/**
+          filters:
+            - StripPrefix=1
+
+        - id: participation-service
+          uri: lb://challenge-service
+          predicates:
+            - Path=/api/participations/**
+          filters:
+            - StripPrefix=1
+
+        - id: task-service
+          uri: lb://challenge-service
+          predicates:
+            - Path=/api/tasks/**
+          filters:
+            - StripPrefix=1
+
+        - id: examquiz-service
+          uri: lb://ExamQuiz-service
+          predicates:
+            - Path=/api/exams/**,/api/questions/**,/api/answers/**,/api/attempts/**,/api/attempt-answers/**,/api/exam-participations/**,/api/exam-sessions/**,/api/exam-settings/**,/api/cheating-logs/**,/api/proctoring/**,/api/quiz-settings/**,/api/results/**,/api/admin/monitoring/**
+          filters:
+            - StripPrefix=0
+
+        - id: RoadMap-Carrer
+          uri: lb://roadmap-service
+          predicates:
+            - Path=/api/roadmaps/**
+          filters:
+            - StripPrefix=1
+
+        - id: blog-service
+          uri: lb://blog-service
+          predicates:
+            - Path=/api/blogs/**
+          filters:
+            - StripPrefix=1
+
+        - id: blog-analytic-service
+          uri: lb://blog-analytic-service
+          predicates:
+            - Path=/api/blog-analytics/**
+          filters:
+            - StripPrefix=1
+
+        - id: evenment
+          uri: lb://event-service
+          predicates:
+            - Path=/api/events/**
+          filters:
+            - StripPrefix=1
+
+        - id: planning-service
+          uri: lb://planning-service
+          predicates:
+            - Path=/api/planning/**
+          filters:
+            - StripPrefix=1
+
+        - id: subscribe-service
+          uri: lb://subscribe-service
+          predicates:
+            - Path=/api/subscribe/**
+          filters:
+            - StripPrefix=1
+
+        - id: user-service
+          uri: lb://SMART-FREELANCE-BACKEND
+          predicates:
+            - Path=/api/**
+          filters:
+            - StripPrefix=0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics,gateway
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
