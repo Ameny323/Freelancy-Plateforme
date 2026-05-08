@@ -57,7 +57,6 @@ Security is handled by **Keycloak** + **JWT** across all services, enforced at t
 
 Candidates browse and join coding challenges filtered by technology, difficulty, and duration.
 
-- **950+ active challenges** across DevOps, Backend, Web, Machine Learning, and more
 - Difficulty levels: Beginner / Intermediate / Advanced / Expert
 - Upon joining, the platform **automatically provisions a private GitHub repository** for the candidate via the GitHub API — no manual steps required
 - Every push by the candidate triggers a **GitHub Actions pipeline** that runs a **SonarQube static analysis** on the submitted code
