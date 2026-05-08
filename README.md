@@ -61,7 +61,6 @@ Candidates browse and join coding challenges filtered by technology, difficulty,
 - Upon joining, the platform **automatically provisions a private GitHub repository** for the candidate via the GitHub API — no manual steps required
 - Every push by the candidate triggers a **GitHub Actions pipeline** that runs a **SonarQube static analysis** on the submitted code
 - Admins track progress per challenge: task completion status, points earned, and deadline countdowns
-- **AI-powered challenge generation** — create a full challenge from a topic, technology, or skill description
 
 ![Explore Challenges](documentation/01_explore_challenges.png)
 ![Challenge Progress](documentation/02_challenge_progress.png)
